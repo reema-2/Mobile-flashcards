@@ -13,7 +13,7 @@ import Quiz from './components/Quiz'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import reducer from './reducers'
-import middleware from "./reducers/middleware";
+import middleware from "./middleware/middleware";
 import { setLocalNotification } from './utils/helpers'
 
 const Stack = createStackNavigator();
