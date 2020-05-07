@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import DeckListView from './components/DeckListView';
 import AddDeck from './components/AddDeck'
@@ -10,37 +10,37 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Deck from './components/Deck'
 import AddCard from './components/AddCard'
 import Quiz from './components/Quiz'
-// import { createStore } from 'redux'
-// import { Provider } from 'react-redux'
-// import reducer from './reducers'
-// import middleware from "./reducers/applyMiddleware";
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import reducer from './reducers'
+import middleware from "./reducers/middleware";
+import { setLocalNotification } from './utils/helpers'
 
 const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
-export default function App() {
-  return (
-    // <Provider store={createStore(reducer , middleware)}>
-       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Decks" component={TabNav} />
-          <Stack.Screen name="DeckListView" component={DeckListView} />
-          <Stack.Screen name="Deck" component={Deck} />
-          <Stack.Screen name="AddCard" component={AddCard} />
-          <Stack.Screen name="Quiz" component={Quiz} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    // </Provider>
-  );
-}
+const Tab =   Platform.OS === "ios"
+? createBottomTabNavigator()
+: createMaterialTopTabNavigator();
+export default class App extends React.Component{
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  componentDidMount() {
+    setLocalNotification()
+  }
+  render(){
+    return (
+      <Provider store={createStore(reducer , middleware)}>
+        <NavigationContainer>
+         <Stack.Navigator>
+           <Stack.Screen name="Decks" component={TabNav} />
+           <Stack.Screen name="DeckListView" component={DeckListView} />
+           <Stack.Screen name="Deck" component={Deck} />
+           <Stack.Screen name="AddCard" component={AddCard} />
+           <Stack.Screen name="Quiz" component={Quiz} />
+         </Stack.Navigator>
+       </NavigationContainer>
+      </Provider>
+   )
+  }
+}
 
 function TabNav() {
   return (
@@ -52,17 +52,21 @@ function TabNav() {
           if (route.name === "DeckListView") {
             icon = (
               <Icon
-              name='rowing' />
+              name='list' />
             );
           } else if (route.name === "Add Deck") {
             icon = (
               <Icon
-              name='rowing' />
+              name='add' />
             );
           } 
           return icon;
         }
       })}
+      tabBarOptions={{
+        activeTintColor: 'tomato',
+        inactiveTintColor: 'gray',
+      }}
     >
       <Tab.Screen name="DeckListView" component={DeckListView} />
       <Tab.Screen name="Add Deck" component={AddDeck} />

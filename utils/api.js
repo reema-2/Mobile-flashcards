@@ -80,7 +80,6 @@ export async function saveDeckTitle(title) {
     title: title,
     questions: []
   };
-console.log("saveDeckTitle",deck)
   await AsyncStorage.mergeItem(
     FLASHCARDS_STORAGE_KEY,
     JSON.stringify({

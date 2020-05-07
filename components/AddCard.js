@@ -1,8 +1,13 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux'
 import {saveCardToDeck} from '../utils/api'
+import {addCardToDeck} from '../actions/decks'
+
 class AddCard extends Component{
- 
+  constructor(props) {
+    super(props);
+  }
   state={
     questionValue:"",
     answerValue:""
@@ -24,12 +29,15 @@ class AddCard extends Component{
   Submit =(deckId) => {
     this.setState(() => ({ inputvalue: '' }));
     let card = {"answer":this.state.answerValue, "question": this.state.questionValue}
-    saveCardToDeck(deckId,card)
+
+    saveCardToDeck(deckId, card).then(() => {
+      this.props.dispatch(addCardToDeck(deckId, card));
+    });
+    
     this.props.navigation.goBack();
   }
 render(){
   const { deckId } = this.props.route.params;
-  console.log("route>",deckId)
   return (
     <View style={styles.container}>
       <TextInput
@@ -51,7 +59,13 @@ render(){
   );
 }
 }
-export default AddCard;
+
+function mapStateToProps (decks) {
+  return {
+    decks
+  }
+}
+export default connect(mapStateToProps)(AddCard)
 
 const styles = StyleSheet.create({
   container: {

@@ -2,32 +2,34 @@ import React, {Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { getDecks } from '../utils/api'
 import { connect } from 'react-redux'
-import { handleGetAllDecks } from '../actions/decks'
+import { getAllDecks } from '../actions/decks'
+
+
 class DeckListView extends Component {
  
   constructor(props) {
     super(props);
-    this.state={
-      decks:[]
-    }; 
   }
   componentDidMount() {
-   // this.props.dispatch(handleGetAllDecks())
-   getDecks().then((value) => this.setState({decks: value}))
-  } 
 
+   return getDecks().then(decks => {
+    this.props.dispatch(getAllDecks(decks));
+  });
+  
+  }
+ 
   goToDeckView = (deck) =>{
-   this.props.navigation.navigate('Deck',{deck})
+    this.props.navigation.navigate('Deck', { title: deck })
   }
 
   render(){
     const { decks } = this.props;
-    console.log(this.state.decks)
     return (
       <View style={styles.container}>
         <ScrollView>
-          { Object.values(this.state.decks).map(deck => (
-          <TouchableOpacity key={deck.title} style={styles.buttonContainer}  onPress={ () => this.goToDeckView(deck)} >
+          { decks &&
+            Object.values(decks).map(deck => (
+          <TouchableOpacity key={deck.title} style={styles.buttonContainer}  onPress={ () => this.goToDeckView(deck.title)} >
               <Text style={styles.deckText}>{deck.title}</Text>
               <Text style={styles.cardText}>{deck.questions.length}</Text>
           </TouchableOpacity>
@@ -38,13 +40,12 @@ class DeckListView extends Component {
   }
 } 
 
-export default DeckListView
-// function mapStateToProps({ decks }) {
-//   return {
-//     decks
-//   };
-// }
-// export default connect(mapStateToProps)(DeckListView)
+function mapStateToProps(decks) {
+  return {
+    decks
+  };
+}
+export default connect(mapStateToProps)(DeckListView)
 
 const styles = StyleSheet.create({
   container: {
@@ -58,10 +59,10 @@ const styles = StyleSheet.create({
     borderWidth: 2 ,
     padding: 10,
     borderRadius: 7,
-    height: 100,
-    width: 250,
+    height: 150,
+    width: 400,
     margin: 10,
-    backgroundColor: "#e9dfd9",
+    backgroundColor: "white",
     alignItems: 'center',
     justifyContent: 'center'
   },

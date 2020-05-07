@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import {saveDeckTitle} from '../utils/api'
-// import { connect } from 'react-redux'
-// import { adddDeck } from '../actions/decks'
+import { connect } from 'react-redux'
+import { adddDeck } from '../actions/decks'
 
  class AddDeck extends Component{
 
@@ -15,23 +15,17 @@ import {saveDeckTitle} from '../utils/api'
       ...state,
       inputvalue: value 
     }))
-    console.log("hi ",value)
   }
   
   saveTitle =()=>{
+    let deckTitle = this.state.inputvalue
+
+     saveDeckTitle(deckTitle).then(deck => {
+      this.props.dispatch(adddDeck(deck));
+    });
+    
     this.setState(() => ({ inputvalue: '' }));
-    let deck = this.state.inputvalue
-    // this.props.dispatch(adddDeck(deck))
-    // dispatch(handleAddDecks(deckTitle));
-
-    // this.props.dispatch(
-    //   saveDeckTitle(deckTitle).then(deck => {
-    //   dispatch(addDeck(deck));
-    // }))
-
-    saveDeckTitle(deck)
-    this.props.navigation.goBack();
-   // this.props.navigation.navigate('Deck',{deck})
+    this.props.navigation.navigate('Deck', { title: deckTitle })
   }
 
   render(){
@@ -52,13 +46,12 @@ import {saveDeckTitle} from '../utils/api'
   }
 }
 
-// function mapStateToProps (decks) {
-//   return {
-//     decks
-//   }
-// }
- export default AddDeck
-// export default connect(mapStateToProps)(AddDeck)
+function mapStateToProps (decks) {
+  return {
+    decks
+  }
+}
+ export default connect(mapStateToProps)(AddDeck)
 
 const styles = StyleSheet.create({
   container: {

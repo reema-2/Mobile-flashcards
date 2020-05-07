@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-
+import { clearLocalNotification, setLocalNotification } from '../utils/helpers'
 class Quiz extends Component {
 
   state={
@@ -8,7 +8,7 @@ class Quiz extends Component {
     numIncorrectAnswe:0,
     index:0,
     viewQues: true,
-    showAnswer: false
+    showAnswer: false,
   }
 
   correctAnswe = (deckQuesLength1) =>{
@@ -65,11 +65,15 @@ class Quiz extends Component {
       showAnswer:false
     })
    }
+   
+   setupNotificaiton() {
+    clearLocalNotification().then(setLocalNotification);
+  }
   
   render(){
     const {navigation}= this.props.navigation.navigate
     const { deck } = this.props.route.params;
-
+  
     return (
       <View style={styles.container}>
         { deck.questions.length != 0 
@@ -78,33 +82,41 @@ class Quiz extends Component {
              ? <View>
                {this.state.showAnswer === false
                ?<View>
-                    <Text>{this.state.index+1}/{deck.questions.length}</Text>
-                    <Text style={styles.quesText}>{deck.questions[this.state.index].question}</Text>
-                    <TouchableOpacity onPress={this.showAnsweQues}>
-                      <Text style={styles.answer}>Answer</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.correct} onPress={ () => this.correctAnswe(deck.questions.length)}>
-                        <Text style={styles.buttonText}>Correct</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.incorrect} onPress={()=> this.incorrectAnswe(deck.questions.length)}>
-                        <Text style={styles.buttonText}>Incorrect</Text>
-                    </TouchableOpacity>
-               </View>
+                    <Text style={styles.questionNum}>{this.state.index+1}/{deck.questions.length}</Text>
+                    <View style={styles.questionContenar}>
+                      <Text style={styles.quesText}>{deck.questions[this.state.index].question}</Text>
+                      <TouchableOpacity onPress={this.showAnsweQues}>
+                        <Text style={styles.answer}>Answer</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                      <TouchableOpacity style={styles.correct} onPress={ () => this.correctAnswe(deck.questions.length)}>
+                          <Text style={styles.buttonText}>Correct</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.incorrect} onPress={()=> this.incorrectAnswe(deck.questions.length)}>
+                          <Text style={styles.buttonText}>Incorrect</Text>
+                      </TouchableOpacity>
+                    </View>
+                 </View>
                :<View>
+                  <Text style={styles.questionNum}>{this.state.index+1}/{deck.questions.length}</Text>
+                  <View style={styles.questionContenar}>
                     <Text style={styles.quesText}>{deck.questions[this.state.index].answer}</Text>
                     <TouchableOpacity onPress={this.showQues}>
                       <Text style={styles.answer}>Question</Text>
                     </TouchableOpacity>
+                  </View>
                </View>
               }
-                </View>
-            :  <View>
-                  <Text>Score {this.state.numCorrectAnswe}</Text>
-                  <TouchableOpacity style={styles.incorrect} onPress={this.startQuiz}>
-                    <Text style={styles.buttonText}>start the Quiz</Text>
+              </View>
+            :  <View style={styles.buttonContainer}>
+                  <Text style={styles.score}>Quiz Completed {this.state.numCorrectAnswe}</Text>
+                  <Text style={styles.scoreAnswered}> You have answered  {(this.state.numCorrectAnswe/deck.questions.length)*100} %</Text>
+                  <TouchableOpacity style={styles.startQuiz} onPress={this.startQuiz}>
+                    <Text style={styles.startQuizText}>start the Quiz</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.incorrect} onPress={this.goToBack}>
-                      <Text style={styles.buttonText}>Go Back</Text>
+                  <TouchableOpacity style={styles.goBack} onPress={this.goToBack}>
+                      <Text style={styles.startQuizText}>Go Back</Text>
                   </TouchableOpacity>
               </View>
             }
@@ -118,11 +130,7 @@ class Quiz extends Component {
 export default Quiz
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#efefef",
-    paddingTop:50,
-    alignItems: 'center',
- 
   },
   
   quesText:{
@@ -135,7 +143,12 @@ const styles = StyleSheet.create({
     marginBottom:80,
     fontWeight: "bold",
     fontSize: 20,
-    color: 'blue'
+    color: 'blue',
+  },
+  questionContenar:{
+    alignItems: 'center',
+    paddingTop:50,
+    backgroundColor: "white",
   },
   incorrect:{
     marginTop:50,
@@ -159,6 +172,52 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 20,
     color: 'white',
+  },
+  questionNum:{
+    fontWeight: "bold",
+    fontSize: 30,
+    color: '#707189',
+    alignItems:"flex-start"
+  },
+  score:{
+    paddingTop:50,
+    paddingBottom:10,
+    fontWeight: "bold",
+    fontSize: 30,
+    color: '#707189'
+  },
+  scoreAnswered:{
+    paddingBottom:50,
+    fontWeight: "bold",
+    fontSize: 25,
+    color: '#3CB371'
+  },
+  buttonContainer: { 
+    alignItems: 'center',
+  },
+  startQuiz:{
+    marginTop:20,
+    backgroundColor: "#e9dfd9",
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 7,
+    width:300,
+    alignItems: 'center',
+  },
+  goBack:{
+    marginTop:20,
+    backgroundColor: "white",
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 7,
+    width:300,
+    alignItems: 'center',
+  },
+  startQuizText:{
+    color:"#707189",
+    fontWeight: "bold",
+    fontSize: 20,
+
   }
 
 });
