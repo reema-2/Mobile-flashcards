@@ -5,7 +5,7 @@ This app was built as a  project for the Udacity React Nanodegree Program. The p
 Mobile Flashcards is a React Native app for iOS and Android that allows users to create decks,add cards and quiz themselves.
 
 ### Technologies used:
- - React
+ - React Native
  - Redux 
  - expo
  - react-navigation
@@ -37,6 +37,3 @@ This project has been tested on iOS 11+ platform
     │    ├── helpers.js # Notifications setting
  
 ```
-## Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app). You can find more information on how to perform common tasks [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
